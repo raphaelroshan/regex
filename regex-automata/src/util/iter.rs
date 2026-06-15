@@ -426,17 +426,42 @@ impl<'h> Searcher<'h> {
     where
         F: FnMut(&Input<'_>) -> Result<Option<Match>, MatchError>,
     {
-        let mut m = match finder(&self.input)? {
+        let m = match finder(&self.input)? {
             None => return Ok(None),
             Some(m) => m,
         };
-        if m.is_empty() && Some(m.end()) == self.last_match_end {
-            m = match self.handle_overlapping_empty_match(m, finder)? {
-                None => return Ok(None),
-                Some(m) => m,
-            };
+        if m.is_empty() {
+            // When we find an empty match, we always advance past it by
+            // setting the next search start to one byte past the empty
+            // match's position. This ensures the iterator always makes
+            // forward progress and avoids an infinite loop (where the
+            // same empty match would be found repeatedly). We still
+            // report the empty match.
+            //
+            // We advance to `m.end() + 1` rather than `start + 1`
+            // because the empty match may occur at a position strictly
+            // after the current search start. Advancing by only 1 byte
+            // from start would leave the same empty match reachable.
+            //
+            // Previously, empty matches whose end position coincided
+            // with the end of the previous match were suppressed (not
+            // reported) in order to prevent what was considered an
+            // "overlapping" match. However, that suppression could hide
+            // real non-empty matches at the same position. For example,
+            // the pattern `a?|b` on `aba` would find `a` at [0,1) and
+            // then find an empty match at [1,1) (from `a?`). After
+            // suppressing that empty match and advancing to position 2,
+            // the `b` match at [1,2) was never found. By reporting all
+            // empty matches (even those abutting a previous match), we
+            // ensure that no positions are silently skipped.
+            //
+            // Note that this aligns the behavior with other major regex
+            // engines such as Python, Go, and JavaScript, which also
+            // report empty matches that abut a previous match.
+            self.input.set_start(m.end().checked_add(1).unwrap());
+        } else {
+            self.input.set_start(m.end());
         }
-        self.input.set_start(m.end());
         self.last_match_end = Some(m.end());
         Ok(Some(m))
     }
@@ -637,42 +662,6 @@ impl<'h> Searcher<'h> {
         // regex engines themselves are expected to deal with that and not
         // report any matches within a codepoint if they are configured in
         // UTF-8 mode.
-        self.input.set_start(self.input.start().checked_add(1).unwrap());
-        finder(&self.input)
-    }
-
-    /// Handles the special case of an empty match by ensuring that 1) the
-    /// iterator always advances and 2) empty matches never overlap with other
-    /// matches.
-    ///
-    /// (1) is necessary because we principally make progress by setting the
-    /// starting location of the next search to the ending location of the last
-    /// match. But if a match is empty, then this results in a search that does
-    /// not advance and thus does not terminate.
-    ///
-    /// (2) is not strictly necessary, but makes intuitive sense and matches
-    /// the presiding behavior of most general purpose regex engines. The
-    /// "intuitive sense" here is that we want to report NON-overlapping
-    /// matches. So for example, given the regex 'a|(?:)' against the haystack
-    /// 'a', without the special handling, you'd get the matches [0, 1) and [1,
-    /// 1), where the latter overlaps with the end bounds of the former.
-    ///
-    /// Note that we mark this cold and forcefully prevent inlining because
-    /// handling empty matches like this is extremely rare and does require
-    /// quite a bit of code, comparatively. Keeping this code out of the main
-    /// iterator function keeps it smaller and more amenable to inlining
-    /// itself.
-    #[cold]
-    #[inline(never)]
-    fn handle_overlapping_empty_match<F>(
-        &mut self,
-        m: Match,
-        mut finder: F,
-    ) -> Result<Option<Match>, MatchError>
-    where
-        F: FnMut(&Input<'_>) -> Result<Option<Match>, MatchError>,
-    {
-        assert!(m.is_empty());
         self.input.set_start(self.input.start().checked_add(1).unwrap());
         finder(&self.input)
     }

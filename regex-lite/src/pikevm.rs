@@ -463,49 +463,23 @@ impl<'r, 'h> Iterator for FindMatches<'r, 'h> {
         ) {
             return None;
         }
-        let mut m =
-            (self.slots[0].unwrap().get(), self.slots[1].unwrap().get());
+        let m = (self.slots[0].unwrap().get(), self.slots[1].unwrap().get());
         if m.0 >= m.1 {
-            m = self.handle_overlapping_empty_match(m)?;
+            // For empty matches, advance past the empty match position
+            // to ensure the iterator makes forward progress and avoids
+            // an infinite loop. We still report the empty match. We
+            // advance from the match position (m.1), not from the search
+            // start (self.at), because the empty match may occur at a
+            // position strictly after the search start.
+            //
+            // See the corresponding change in
+            // `regex-automata/src/util/iter.rs` for more details.
+            let len = core::cmp::max(1, utf8::decode(&self.haystack[m.1..]).1);
+            self.at = m.1.checked_add(len).unwrap();
+        } else {
+            self.at = m.1;
         }
-        self.at = m.1;
         self.last_match_end = Some(m.1);
-        Some(m)
-    }
-}
-
-impl<'r, 'h> FindMatches<'r, 'h> {
-    /// Handles the special case of an empty match by ensuring that 1) the
-    /// iterator always advances and 2) empty matches never overlap with other
-    /// matches.
-    ///
-    /// Note that we mark this cold and forcefully prevent inlining because
-    /// handling empty matches like this is extremely rare and does require a
-    /// bit of code, comparatively. Keeping this code out of the main iterator
-    /// function keeps it smaller and more amenable to inlining itself.
-    #[cold]
-    #[inline(never)]
-    fn handle_overlapping_empty_match(
-        &mut self,
-        mut m: (usize, usize),
-    ) -> Option<(usize, usize)> {
-        assert!(m.0 >= m.1);
-        if Some(m.1) == self.last_match_end {
-            let len =
-                core::cmp::max(1, utf8::decode(&self.haystack[self.at..]).1);
-            self.at = self.at.checked_add(len).unwrap();
-            if !self.pikevm.search(
-                &mut self.cache,
-                self.haystack,
-                self.at,
-                self.haystack.len(),
-                false,
-                &mut self.slots,
-            ) {
-                return None;
-            }
-            m = (self.slots[0].unwrap().get(), self.slots[1].unwrap().get());
-        }
         Some(m)
     }
 }

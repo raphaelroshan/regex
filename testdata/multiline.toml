@@ -230,37 +230,37 @@ matches = [[0, 0], [2, 5]]
 name = "repeat3"
 regex = '(?m)(?:^|a)*'
 haystack = "a\naaa\n"
-matches = [[0, 0], [1, 1], [2, 2], [3, 5], [6, 6]]
+matches = [[0, 0], [1, 1], [2, 2], [3, 5], [5, 5], [6, 6]]
 
 [[test]]
 name = "repeat3-crlf"
 regex = '(?Rm)(?:^|a)*'
 haystack = "a\naaa\n"
-matches = [[0, 0], [1, 1], [2, 2], [3, 5], [6, 6]]
+matches = [[0, 0], [1, 1], [2, 2], [3, 5], [5, 5], [6, 6]]
 
 [[test]]
 name = "repeat3-crlf-cr"
 regex = '(?Rm)(?:^|a)*'
 haystack = "a\raaa\r"
-matches = [[0, 0], [1, 1], [2, 2], [3, 5], [6, 6]]
+matches = [[0, 0], [1, 1], [2, 2], [3, 5], [5, 5], [6, 6]]
 
 [[test]]
 name = "repeat3-no-multi"
 regex = '(?:^|a)*'
 haystack = "a\naaa\n"
-matches = [[0, 0], [1, 1], [2, 5], [6, 6]]
+matches = [[0, 0], [1, 1], [2, 5], [5, 5], [6, 6]]
 
 [[test]]
 name = "repeat3-no-multi-crlf"
 regex = '(?R)(?:^|a)*'
 haystack = "a\naaa\n"
-matches = [[0, 0], [1, 1], [2, 5], [6, 6]]
+matches = [[0, 0], [1, 1], [2, 5], [5, 5], [6, 6]]
 
 [[test]]
 name = "repeat3-no-multi-crlf-cr"
 regex = '(?R)(?:^|a)*'
 haystack = "a\raaa\r"
-matches = [[0, 0], [1, 1], [2, 5], [6, 6]]
+matches = [[0, 0], [1, 1], [2, 5], [5, 5], [6, 6]]
 
 [[test]]
 name = "repeat4"
@@ -302,37 +302,37 @@ matches = [[0, 0], [2, 5]]
 name = "repeat5"
 regex = '(?m)(?:^|a*)'
 haystack = "a\naaa\n"
-matches = [[0, 0], [1, 1], [2, 2], [3, 5], [6, 6]]
+matches = [[0, 0], [1, 1], [2, 2], [3, 5], [5, 5], [6, 6]]
 
 [[test]]
 name = "repeat5-crlf"
 regex = '(?Rm)(?:^|a*)'
 haystack = "a\naaa\n"
-matches = [[0, 0], [1, 1], [2, 2], [3, 5], [6, 6]]
+matches = [[0, 0], [1, 1], [2, 2], [3, 5], [5, 5], [6, 6]]
 
 [[test]]
 name = "repeat5-crlf-cr"
 regex = '(?Rm)(?:^|a*)'
 haystack = "a\raaa\r"
-matches = [[0, 0], [1, 1], [2, 2], [3, 5], [6, 6]]
+matches = [[0, 0], [1, 1], [2, 2], [3, 5], [5, 5], [6, 6]]
 
 [[test]]
 name = "repeat5-no-multi"
 regex = '(?:^|a*)'
 haystack = "a\naaa\n"
-matches = [[0, 0], [1, 1], [2, 5], [6, 6]]
+matches = [[0, 0], [1, 1], [2, 5], [5, 5], [6, 6]]
 
 [[test]]
 name = "repeat5-no-multi-crlf"
 regex = '(?R)(?:^|a*)'
 haystack = "a\naaa\n"
-matches = [[0, 0], [1, 1], [2, 5], [6, 6]]
+matches = [[0, 0], [1, 1], [2, 5], [5, 5], [6, 6]]
 
 [[test]]
 name = "repeat5-no-multi-crlf-cr"
 regex = '(?R)(?:^|a*)'
 haystack = "a\raaa\r"
-matches = [[0, 0], [1, 1], [2, 5], [6, 6]]
+matches = [[0, 0], [1, 1], [2, 5], [5, 5], [6, 6]]
 
 [[test]]
 name = "repeat6"
@@ -410,37 +410,37 @@ matches = [[0, 4]]
 name = "repeat8"
 regex = '(?m)(?:^[a-z]{3}\n?)*'
 haystack = "abc\ndef\nxyz"
-matches = [[0, 11]]
+matches = [[0, 11], [11, 11]]
 
 [[test]]
 name = "repeat8-crlf"
 regex = '(?Rm)(?:^[a-z]{3}\n?)*'
 haystack = "abc\ndef\nxyz"
-matches = [[0, 11]]
+matches = [[0, 11], [11, 11]]
 
 [[test]]
 name = "repeat8-crlf-cr"
 regex = '(?Rm)(?:^[a-z]{3}\r?)*'
 haystack = "abc\rdef\rxyz"
-matches = [[0, 11]]
+matches = [[0, 11], [11, 11]]
 
 [[test]]
 name = "repeat8-no-multi"
 regex = '(?:^[a-z]{3}\n?)*'
 haystack = "abc\ndef\nxyz"
-matches = [[0, 4], [5, 5], [6, 6], [7, 7], [8, 8], [9, 9], [10, 10], [11, 11]]
+matches = [[0, 4], [4, 4], [5, 5], [6, 6], [7, 7], [8, 8], [9, 9], [10, 10], [11, 11]]
 
 [[test]]
 name = "repeat8-no-multi-crlf"
 regex = '(?R)(?:^[a-z]{3}\n?)*'
 haystack = "abc\ndef\nxyz"
-matches = [[0, 4], [5, 5], [6, 6], [7, 7], [8, 8], [9, 9], [10, 10], [11, 11]]
+matches = [[0, 4], [4, 4], [5, 5], [6, 6], [7, 7], [8, 8], [9, 9], [10, 10], [11, 11]]
 
 [[test]]
 name = "repeat8-no-multi-crlf-cr"
 regex = '(?R)(?:^[a-z]{3}\r?)*'
 haystack = "abc\rdef\rxyz"
-matches = [[0, 4], [5, 5], [6, 6], [7, 7], [8, 8], [9, 9], [10, 10], [11, 11]]
+matches = [[0, 4], [4, 4], [5, 5], [6, 6], [7, 7], [8, 8], [9, 9], [10, 10], [11, 11]]
 
 [[test]]
 name = "repeat9"
@@ -482,37 +482,37 @@ matches = [[7, 11]]
 name = "repeat10"
 regex = '(?m)(?:\n?[a-z]{3}$)*'
 haystack = "abc\ndef\nxyz"
-matches = [[0, 11]]
+matches = [[0, 11], [11, 11]]
 
 [[test]]
 name = "repeat10-crlf"
 regex = '(?Rm)(?:\n?[a-z]{3}$)*'
 haystack = "abc\ndef\nxyz"
-matches = [[0, 11]]
+matches = [[0, 11], [11, 11]]
 
 [[test]]
 name = "repeat10-crlf-cr"
 regex = '(?Rm)(?:\r?[a-z]{3}$)*'
 haystack = "abc\rdef\rxyz"
-matches = [[0, 11]]
+matches = [[0, 11], [11, 11]]
 
 [[test]]
 name = "repeat10-no-multi"
 regex = '(?:\n?[a-z]{3}$)*'
 haystack = "abc\ndef\nxyz"
-matches = [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6], [7, 11]]
+matches = [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6], [7, 11], [11, 11]]
 
 [[test]]
 name = "repeat10-no-multi-crlf"
 regex = '(?R)(?:\n?[a-z]{3}$)*'
 haystack = "abc\ndef\nxyz"
-matches = [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6], [7, 11]]
+matches = [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6], [7, 11], [11, 11]]
 
 [[test]]
 name = "repeat10-no-multi-crlf-cr"
 regex = '(?R)(?:\r?[a-z]{3}$)*'
 haystack = "abc\rdef\rxyz"
-matches = [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6], [7, 11]]
+matches = [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6], [7, 11], [11, 11]]
 
 [[test]]
 name = "repeat11"
@@ -698,19 +698,19 @@ matches = []
 name = "repeat16"
 regex = '(?m)(?:$\n)*'
 haystack = "\n\naaa\n\n"
-matches = [[0, 2], [3, 3], [4, 4], [5, 7]]
+matches = [[0, 2], [2, 2], [3, 3], [4, 4], [5, 7], [7, 7]]
 
 [[test]]
 name = "repeat16-crlf"
 regex = '(?Rm)(?:$\n)*'
 haystack = "\n\naaa\n\n"
-matches = [[0, 2], [3, 3], [4, 4], [5, 7]]
+matches = [[0, 2], [2, 2], [3, 3], [4, 4], [5, 7], [7, 7]]
 
 [[test]]
 name = "repeat16-crlf-cr"
 regex = '(?Rm)(?:$\r)*'
 haystack = "\r\raaa\r\r"
-matches = [[0, 2], [3, 3], [4, 4], [5, 7]]
+matches = [[0, 2], [2, 2], [3, 3], [4, 4], [5, 7], [7, 7]]
 
 [[test]]
 name = "repeat16-no-multi"

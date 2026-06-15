@@ -74,7 +74,7 @@ matches = [[0, 0], [1, 1], [2, 2], [3, 3]]
 name = "empty11"
 regex = 'b|(?:)+'
 haystack = 'abc'
-matches = [[0, 0], [1, 2], [3, 3]]
+matches = [[0, 0], [1, 2], [2, 2], [3, 3]]
 
 [[test]]
 name = "start1"
@@ -122,22 +122,40 @@ anchored = true
 name = "nonempty-followedby-empty"
 regex = 'abc|.*?'
 haystack = "abczzz"
-matches = [[0, 3], [4, 4], [5, 5], [6, 6]]
+matches = [[0, 3], [3, 3], [4, 4], [5, 5], [6, 6]]
 
 [[test]]
 name = "nonempty-followedby-oneempty"
 regex = 'abc|.*?'
 haystack = "abcz"
-matches = [[0, 3], [4, 4]]
+matches = [[0, 3], [3, 3], [4, 4]]
 
 [[test]]
 name = "nonempty-followedby-onemixed"
 regex = 'abc|.*?'
 haystack = "abczabc"
-matches = [[0, 3], [4, 7]]
+matches = [[0, 3], [3, 3], [4, 7], [7, 7]]
 
 [[test]]
 name = "nonempty-followedby-twomixed"
 regex = 'abc|.*?'
 haystack = "abczzabc"
-matches = [[0, 3], [4, 4], [5, 8]]
+matches = [[0, 3], [3, 3], [4, 4], [5, 8], [8, 8]]
+
+# Regression test for https://github.com/rust-lang/regex/issues/1358
+# The old empty match suppression algorithm would suppress an empty match
+# at a position abutting a prior match, and in doing so, skip over that
+# position entirely. This could hide real non-empty matches. With the fix,
+# empty matches abutting prior matches are no longer suppressed, which
+# means positions are never silently skipped.
+[[test]]
+name = "i1358-empty-match-does-not-hide-nonempty"
+regex = 'a?|b'
+haystack = "aba"
+matches = [[0, 1], [1, 1], [2, 3], [3, 3]]
+
+[[test]]
+name = "i1358-empty-match-does-not-hide-nonempty2"
+regex = 'a?|b'
+haystack = "abbba"
+matches = [[0, 1], [1, 1], [2, 2], [3, 3], [4, 5], [5, 5]]

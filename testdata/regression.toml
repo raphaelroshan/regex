@@ -520,7 +520,7 @@ regex = '(?:(?u:\b)|(?s-u:.))+'
 haystack = "oB"
 unicode = true
 utf8 = false
-matches = [[0, 0], [1, 2]]
+matches = [[0, 0], [1, 2], [2, 2]]
 
 # From: https://github.com/rust-lang/regex/issues/429
 [[test]]
@@ -569,6 +569,7 @@ matches = [
   [[0, 0], []],
   [[1, 1], []],
   [[2, 4], [2, 4]],
+  [[4, 4], []],
 ]
 
 # From: https://github.com/rust-lang/regex/issues/429
@@ -718,7 +719,7 @@ matches = [[[0, 1], [], [0, 1]]]
 name = "negated-unicode-word-boundary-dfa-fail"
 regex = '\B.*'
 haystack = "!\u02D7"
-matches = [[0, 3]]
+matches = [[0, 3], [3, 3]]
 
 # This failure was found in the *old* regex crate (prior to regex 1.9), but
 # I didn't investigate why. My best guess is that it's a literal optimization
