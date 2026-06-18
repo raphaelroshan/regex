@@ -177,7 +177,17 @@ impl BoundedBacktracker {
         }
         // If the backtracker is just going to return an error because the
         // haystack is too long, then obviously do not use it.
-        if input.get_span().len() > engine.max_haystack_len() {
+        //
+        // We also bail when the maximum haystack length is zero. For very
+        // large NFAs, the backtracker's visited capacity can be too small to
+        // hold even an empty haystack, in which case 'max_haystack_len'
+        // saturates to zero and the engine errors on *every* search. Since a
+        // zero return is indistinguishable from "only the empty haystack is
+        // supported", we conservatively decline to use the backtracker and let
+        // another engine handle the search.
+        if engine.max_haystack_len() == 0
+            || input.get_span().len() > engine.max_haystack_len()
+        {
             return None;
         }
         Some(engine)

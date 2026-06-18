@@ -3703,4 +3703,24 @@ mod tests {
         let re = Regex::new(r"[a-zA-Z]+ing").unwrap();
         assert_eq!(1, re.find_iter("tingling").count());
     }
+
+    // See: https://github.com/rust-lang/regex/issues/1344
+    //
+    // This regex builds an NFA so large that the bounded backtracker's visited
+    // capacity can't hold even an empty haystack, which caused its
+    // 'max_haystack_len' to saturate to zero. The meta engine treated that as
+    // "the empty haystack is supported" and selected the backtracker anyway,
+    // which then returned a 'HaystackTooLong' error that got unwrapped into a
+    // panic. The meta engine should instead fall back to another engine.
+    #[test]
+    fn regression_backtracker_empty_haystack_saturated_max_len() {
+        let _ = env_logger::try_init();
+
+        let config = Regex::config().nfa_size_limit(Some(1_000_000_000));
+        let re = Regex::builder()
+            .configure(config)
+            .build(r"^.{0,404600}$")
+            .unwrap();
+        assert!(re.is_match(""));
+    }
 }
